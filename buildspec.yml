@@ -1,22 +1,23 @@
 version: 0.2
+
 phases:
   install:
     runtime-versions:
-      docker: 20
+      docker: 18
     commands:
-      - echo Logging in to Amazon ECR...
-       - aws ecr get-login-password --region <your-region> | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.<your-region>.amazonaws.com
-  pre_build:
-    commands:
-      - echo Building Docker image...
-      - docker-compose build
+      - echo Installing dependencies...
+      - sudo apt-get update -y
+      - sudo apt-get install -y docker.io docker-compose
+      - echo Docker and Docker Compose installed
   build:
     commands:
-      - echo Tagging image...
-      - docker tag my-flask-app:latest <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/my-flask-app:latest
-      - echo Pushing image...
-      - docker push <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/my-flask-app:latest
+      - echo Building the Docker image...
+      - docker-compose -f docker-compose.yml build
+  post_build:
+    commands:
+      - echo Deployment completed successfully!
+
 artifacts:
   files:
-    - docker-compose.yml
-    - Dockerfile
+    - '**/*'
+  discard-paths: yes
