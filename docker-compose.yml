@@ -6,6 +6,8 @@ services:
       - "5000:5000"
     depends_on:
       - db
+    command: >
+      bash -c "until mysql -h db -u root -ppassword -e 'select 1'; do echo Waiting for database; sleep 2; done; python app.py"  # wait for db
   db:
     image: mysql:8.0
     environment:
