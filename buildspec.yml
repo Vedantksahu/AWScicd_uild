@@ -3,10 +3,22 @@ phases:
   install:
     commands:
       - echo Skipping ECR login, assuming IAM role-based authentication is enabled.
+      - echo Checking Docker service...
+      - service docker start
+      - docker --version  
+      - echo Installing/updating Docker Compose...
+      - curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '(?<=tag_name": "v)[^"]*')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      - chmod +x /usr/local/bin/docker-compose
+
   pre_build:
     commands:
       - echo Building Docker image...
+      - echo Validating docker-compose.yml...
+      - docker-compose config
       - docker-compose build
+      - echo Checking file permissions...
+      - ls -l
+      
   build:
     commands:
       - echo Tagging image...
