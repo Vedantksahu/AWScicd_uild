@@ -7,7 +7,8 @@ phases:
       - service docker start || echo "Docker service start failed. Proceeding if already running."
       - docker --version
       - echo Installing/updating Docker Compose...
-      - curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '(?<=tag_name\": \"v)[^\"]*')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      - |
+        curl -L "https://github.com/docker/compose/releases/download/$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep -oP '(?<=tag_name\": \"v)[^\"]*')/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
       - chmod +x /usr/local/bin/docker-compose
 
   pre_build:
@@ -18,13 +19,14 @@ phases:
       - docker-compose build
       - echo Checking file permissions...
       - ls -l
-      
+
   build:
     commands:
       - echo Tagging image...
       - docker tag my-flask-app:latest <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/my-flask-app:latest
       - echo Pushing image...
       - docker push <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/my-flask-app:latest
+
 artifacts:
   files:
     - docker-compose.yml
