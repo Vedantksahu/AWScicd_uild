@@ -19,5 +19,4 @@ phases:
 artifacts:
   files:
     - docker-compose.yml
-    - Dockerfile
-~                    
+    - Dockerfile                  
