@@ -1,25 +1,23 @@
 version: 0.2
-
 phases:
+  install:
+    runtime-versions:
+      docker: 20
+    commands:
+      - echo Logging in to Amazon ECR...
+       - aws ecr get-login-password --region <your-region> | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.<your-region>.amazonaws.com
   pre_build:
     commands:
-      - echo Starting Docker service...
-      - service docker start || echo "Docker service already running."
-      - docker --version
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region <your-region> | docker login --username AWS --password-stdin <your-account-id>.dkr.ecr.<your-region>.amazonaws.com
-
+      - echo Building Docker image...
+      - docker-compose build
   build:
     commands:
-      - echo Building the Docker image...
-      - docker build -t my-flask-app .
-      - echo Tagging the Docker image...
+      - echo Tagging image...
       - docker tag my-flask-app:latest <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/my-flask-app:latest
-      - echo Pushing the Docker image to ECR...
+      - echo Pushing image...
       - docker push <your-account-id>.dkr.ecr.<your-region>.amazonaws.com/my-flask-app:latest
-
 artifacts:
   files:
+    - docker-compose.yml
     - Dockerfile
-
-
+~                    
